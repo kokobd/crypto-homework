@@ -1,4 +1,4 @@
-package net.zelinf.crypto_homework.classical;
+package net.zelinf.crypto_homework.classical.ex01;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * Crack Virginia password
  */
-public class Ex01 {
+public class Main {
 
     public static void main(String[] args) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Ex01.class.getResourceAsStream("cipher.txt")))) {
+                Main.class.getResourceAsStream("cipher.txt")))) {
             String cipherText = reader.readLine();
             VirginiaCracker cracker = new VirginiaCracker(cipherText);
             List<String> results = cracker.crack();

@@ -1,4 +1,4 @@
-package net.zelinf.crypto_homework.classical;
+package net.zelinf.crypto_homework.classical.ex01;
 
 import java.util.*;
 import java.util.stream.Stream;

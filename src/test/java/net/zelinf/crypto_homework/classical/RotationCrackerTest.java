@@ -1,5 +1,6 @@
 package net.zelinf.crypto_homework.classical;
 
+import net.zelinf.crypto_homework.classical.ex01.RotationCracker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
