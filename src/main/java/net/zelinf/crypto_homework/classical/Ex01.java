@@ -3,7 +3,7 @@ package net.zelinf.crypto_homework.classical;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Crack Virginia password
@@ -15,8 +15,11 @@ public class Ex01 {
                 Ex01.class.getResourceAsStream("cipher.txt")))) {
             String cipherText = reader.readLine();
             VirginiaCracker cracker = new VirginiaCracker(cipherText);
-            Set<Integer> distances = cracker.findDistances();
-            System.out.println(distances);
+            List<String> results = cracker.crack();
+            System.out.println("Possible Results: ");
+            for (String r : results) {
+                System.out.println("\t" + r);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
