@@ -30,6 +30,77 @@ public final class ModularIntegerMatrix implements AnyMatrix {
         }
     }
 
+    /**
+     * Matrix multiplication
+     *
+     * @param another the matrix to multiply with this one
+     * @return the result
+     * @throws IllegalArgumentException If the argument doesn't have matching size.
+     */
+    public ModularIntegerMatrix multiply(ModularIntegerMatrix another) {
+        if (getColumnDimension() != another.getRowDimension() || getMod() != another.getMod())
+            throw new IllegalArgumentException();
+
+        ModularIntegerMatrix result =
+                new ModularIntegerMatrix(getMod(), getRowDimension(), another.getColumnDimension());
+        for (int i = 0; i < result.getRowDimension(); ++i) {
+            for (int j = 0; j < result.getColumnDimension(); ++j) {
+                int sum = 0;
+                for (int n = 0; n < getColumnDimension(); ++n) {
+                    sum += mod.multiply(getEntry(i, n), another.getEntry(n, j));
+                }
+                result.setEntry(i, j, sum);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Matrix addition. Doesn't modify original matrix.
+     *
+     * @param another another matrix to add to this one
+     * @return the sum
+     * @throws IllegalArgumentException If the argument doesn't have the same size.
+     */
+    public ModularIntegerMatrix add(ModularIntegerMatrix another) {
+        checkForSameSize(another);
+        ModularIntegerMatrix result = this.copy();
+
+        for (int i = 0; i < getRowDimension(); ++i) {
+            for (int j = 0; j < getColumnDimension(); ++j) {
+                result.setEntry(i, j, mod.sum(getEntry(i, j), another.getEntry(i, j)));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Matrix subtraction. Doesn't modify original matrix.
+     *
+     * @param another the matrix to subtract from this one
+     * @return the result
+     * @throws IllegalArgumentException If the argument doesn't have the same size.
+     */
+    public ModularIntegerMatrix subtract(ModularIntegerMatrix another) {
+        checkForSameSize(another);
+        ModularIntegerMatrix result = new ModularIntegerMatrix(getMod(), getRowDimension(), getColumnDimension());
+
+        for (int i = 0; i < getRowDimension(); ++i) {
+            for (int j = 0; j < getColumnDimension(); ++j) {
+                result.setEntry(i, j, mod.subtract(getEntry(i, j), another.getEntry(i, j)));
+            }
+        }
+        return result;
+    }
+
+    private void checkForSameSize(ModularIntegerMatrix another) {
+        if (another.getColumnDimension() != getColumnDimension()
+                || another.getRowDimension() != getRowDimension()
+                || getMod() != another.getMod())
+            throw new IllegalArgumentException();
+    }
+
+
     public Optional<ModularIntegerMatrix> getInverse() {
         if (!isSquare()) {
             return Optional.empty();
