@@ -1,9 +1,7 @@
-package net.zelinf.crypto_homework.classical;
+package net.zelinf.crypto_homework.classical.ex02;
 
-import net.zelinf.crypto_homework.classical.ex02.ModularIntegerMatrix;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
