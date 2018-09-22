@@ -28,7 +28,7 @@ public class RotationCracker {
         }
     }
 
-    public Result crack() {
+    public Optional<Result> crack() {
         final Map<Character, Integer> alphaOccurrences = new HashMap<>();
         int totalAlphas = 0;
         for (byte b : cipherText) {
@@ -42,7 +42,7 @@ public class RotationCracker {
             cipherFrequencies.put(ch, (double) alphaOccurrences.getOrDefault(ch, 0) / totalAlphas);
         }
 
-        final double STANDARD_VAL = 0.65;
+        final double STANDARD_VAL = 0.065;
         double minDiff = 1.0;
         int minDiffShift = 0;
         for (int shift = 0; shift < 26; ++shift) {
@@ -59,12 +59,16 @@ public class RotationCracker {
             }
         }
 
+        if (minDiff > 0.02) {
+            return Optional.empty();
+        }
+
         byte[] clearText = new byte[cipherText.length];
         for (int i = 0; i < cipherText.length; ++i) {
             clearText[i] = (byte) ('A' + ((cipherText[i] - 'A') + (26 - minDiffShift)) % 26);
         }
 
-        return new Result(clearText, minDiffShift);
+        return Optional.of(new Result(clearText, minDiffShift));
     }
 
     public static final Map<Character, Double> alphaProb = new HashMap<>();

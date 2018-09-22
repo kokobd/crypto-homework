@@ -31,18 +31,22 @@ public class VirginiaCracker {
                         }
                         parts.add(part);
                     }
-                    List<byte[]> decryptedParts = parts.stream()
+                    Optional<List<byte[]>> decryptedParts = Utils.sequenceA(parts.stream()
                             .map(cipher -> {
-                                RotationCracker.Result result = new RotationCracker(cipher).crack();
-                                return result.getClearText();
+                                return new RotationCracker(cipher).crack().map(RotationCracker.Result::getClearText);
                             })
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toList()));
+                    if (!decryptedParts.isPresent())
+                        return Optional.<String>empty();
                     byte[] result = new byte[cipherText.length];
                     for (int i = 0; i < result.length; ++i) {
-                        result[i] = decryptedParts.get(i % t)[i / t];
+                        result[i] = decryptedParts.get().get(i % t)[i / t];
                     }
-                    return new String(result);
-                }).collect(Collectors.toList());
+                    return Optional.of(new String(result));
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     private List<Integer> possiblePeriods_ = null;
