@@ -26,6 +26,7 @@ test {
     useJUnitPlatform()
 }
 
-run {
-    standardInput = System.in
+task deployJavadoc(type: Copy, dependsOn: javadoc) {
+    from "build/docs/javadoc"
+    into "docs"
 }
