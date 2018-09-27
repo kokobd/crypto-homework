@@ -23,7 +23,7 @@ public class AffineHillCracker {
      * @param keyWidth   width of the key
      * @throws FailedToInferKeyException If the key can not be inferred
      * @throws IllegalArgumentException  If clearText or cipherText is of length 0,
-     *                                   or keyWidth <= 0
+     *                                   or keyWidth is non-positive
      */
     public AffineHillCracker(byte[] clearText, byte[] cipherText, int keyWidth) {
         this.keyWidth = keyWidth;
