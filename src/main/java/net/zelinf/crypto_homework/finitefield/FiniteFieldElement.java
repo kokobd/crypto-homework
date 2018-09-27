@@ -25,6 +25,14 @@ public class FiniteFieldElement implements Cloneable {
         bits = (BitSet) src.bits.clone();
     }
 
+    public static FiniteFieldElement createOne() {
+        return new FiniteFieldElement(1, true);
+    }
+
+    public static FiniteFieldElement createZero() {
+        return new FiniteFieldElement();
+    }
+
     public void set(int index, boolean value) {
         bits.set(index, value);
     }
@@ -50,6 +58,54 @@ public class FiniteFieldElement implements Cloneable {
 
         bits = product;
         modulo(mod);
+    }
+
+    public void multiplicativeInvert(FiniteFieldElement mod) {
+        // Please consult Algorithm 8 of Software Implementation of Elliptic Curve
+        // Cryptography Over Binary Fields
+
+        FiniteFieldElement b = FiniteFieldElement.createOne();
+        FiniteFieldElement c = FiniteFieldElement.createZero();
+        FiniteFieldElement u = null;
+        FiniteFieldElement v = null;
+        try {
+            u = this.clone();
+            v = mod.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        if (u == null || v == null)
+            throw new IllegalStateException();
+
+        while (u.degree() != 0) {
+            int j = u.degree() - v.degree();
+            if (j < 0) {
+                FiniteFieldElement tmp = u;
+                u = v;
+                v = tmp;
+                tmp = b;
+                b = c;
+                c = tmp;
+                j = -j;
+            }
+            FiniteFieldElement x1 = new FiniteFieldElement();
+            x1.set(j, true);
+            FiniteFieldElement x2 = new FiniteFieldElement(x1);
+
+            x1.multiply(v, mod);
+            u.add(x1);
+            u.modulo(mod);
+
+            x2.multiply(c, mod);
+            b.add(x2);
+            b.modulo(mod);
+        }
+
+        this.bits = c.bits;
+    }
+
+    private int degree() {
+        return bits.length();
     }
 
     @Override

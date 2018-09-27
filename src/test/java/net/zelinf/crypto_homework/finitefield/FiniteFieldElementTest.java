@@ -1,6 +1,8 @@
 package net.zelinf.crypto_homework.finitefield;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,10 +42,45 @@ class FiniteFieldElementTest {
 
     @Test
     void testMultiply() {
-        FiniteFieldElement x = fromString("111");
-        FiniteFieldElement y = fromString("101");
-        x.multiply(y, fromString("1011"));
-        assertEquals(fromString("110"), x);
+        assertMultiplication("111", "101", "1011", "110");
+    }
+
+    private static void assertMultiplication(String lhs, String rhs, String mod, String expectedResult) {
+        FiniteFieldElement x = fromString(lhs);
+        FiniteFieldElement y = fromString(rhs);
+        x.multiply(y, fromString(mod));
+        assertEquals(fromString(expectedResult), x);
+    }
+
+    @Test
+    void testInverse() {
+        assertInversion("1", "1011");
+        assertInversion("10", "1011");
+        assertInversion("11", "1011");
+        assertInversion("100", "1011");
+        assertInversion("101", "1011");
+        assertInversion("110", "1011");
+        assertInversion("111", "1011");
+
+        assertInversion("1", "10011");
+        assertInversion("10", "10011");
+        assertInversion("11", "10011");
+        assertInversion("100", "10011");
+        assertInversion("101", "10011");
+        assertInversion("110", "10011");
+        assertInversion("111", "10011");
+        assertInversion("1000", "10011");
+        assertInversion("1001", "10011");
+        assertInversion("1010", "10011");
+    }
+
+    private static void assertInversion(String num, String mod) {
+        FiniteFieldElement mod_ = fromString(mod);
+        FiniteFieldElement num_ = fromString(num);
+        FiniteFieldElement inverse = new FiniteFieldElement(num_);
+        inverse.multiplicativeInvert(mod_);
+        num_.multiply(inverse, mod_);
+        assertEquals(FiniteFieldElement.createOne(), num_);
     }
 
     public static FiniteFieldElement fromString(String str) {
@@ -57,4 +94,9 @@ class FiniteFieldElementTest {
         return element;
     }
 
+    @Test
+    @EnabledOnJre({JRE.JAVA_8})
+    void test() {
+
+    }
 }
