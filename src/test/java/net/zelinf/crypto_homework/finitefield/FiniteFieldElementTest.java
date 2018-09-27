@@ -38,6 +38,14 @@ class FiniteFieldElementTest {
         assertEquals(fromString("110"), num);
     }
 
+    @Test
+    void testMultiply() {
+        FiniteFieldElement x = fromString("111");
+        FiniteFieldElement y = fromString("101");
+        x.multiply(y, fromString("1011"));
+        assertEquals(fromString("110"), x);
+    }
+
     public static FiniteFieldElement fromString(String str) {
         str = new StringBuilder(str).reverse().toString();
 

@@ -40,6 +40,18 @@ public class FiniteFieldElement implements Cloneable {
         }
     }
 
+    public void multiply(FiniteFieldElement another, FiniteFieldElement mod) {
+        BitSet product = new BitSet();
+
+        for (int i = another.bits.nextSetBit(0); i != -1; i = another.bits.nextSetBit(i + 1)) {
+            BitSet cur = (BitSet) bits.clone();
+            product.xor(BitSetUtil.shiftHigher(cur, i));
+        }
+
+        bits = product;
+        modulo(mod);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
