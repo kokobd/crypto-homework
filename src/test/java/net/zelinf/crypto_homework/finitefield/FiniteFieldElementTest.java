@@ -1,102 +1,77 @@
 package net.zelinf.crypto_homework.finitefield;
 
+import net.zelinf.crypto_homework.finitefield.gf2.GF2;
+import net.zelinf.crypto_homework.finitefield.gf2.GF2Elem;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
+
+import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FiniteFieldElementTest {
 
+    private static GF2 field1011;
+
+    private static GF2 field10011;
+
+    @BeforeAll
+    static void initialize() {
+        field1011 = new GF2(GF2.newBareElem(BigInteger.valueOf(0b1011)));
+        field10011 = new GF2(GF2.newBareElem(BigInteger.valueOf(0b10011)));
+    }
+
     @Test
     void testAdd() {
-        assertAll(() -> {
-            FiniteFieldElement op1 = fromString("01010011");
-            FiniteFieldElement op2 = fromString("11001010");
-            FiniteFieldElement expected = fromString("10011001");
+        testAddCase(field1011, 0b101, 0b110, 0b011);
+        testAddCase(field1011, 0b010, 0b011, 0b001);
+    }
 
-            FiniteFieldElement actual = new FiniteFieldElement(op1);
-            actual.add(op2);
-
-            assertEquals(expected, actual);
-        }, () -> {
-            FiniteFieldElement op1 = fromString("111");
-            FiniteFieldElement op2 = fromString("11");
-            FiniteFieldElement expected = fromString("100");
-
-            FiniteFieldElement actual = new FiniteFieldElement(op1);
-            actual.add(op2);
-
-            assertEquals(expected, actual);
-        });
+    private void testAddCase(GF2 field, int x, int y, int result) {
+        GF2Elem lhs = field.newElem(BigInteger.valueOf(x));
+        GF2Elem rhs = field.newElem(BigInteger.valueOf(y));
+        lhs.add(rhs);
+        assertEquals(field.newElem(BigInteger.valueOf(result)), lhs);
     }
 
     @Test
     void testModulo() {
-        FiniteFieldElement num = fromString("11011");
-        FiniteFieldElement div = fromString("1011");
-        num.modulo(div);
+        testModuloCase(0b11011, 0b1011, 0b110);
+    }
 
-        assertEquals(fromString("110"), num);
+    private void testModuloCase(int num, int div, int result) {
+        GF2 gf2 = new GF2(GF2.newBareElem(BigInteger.valueOf(div)));
+        GF2Elem elem = gf2.newElem(BigInteger.valueOf(num));
+        assertEquals(gf2.newElem(BigInteger.valueOf(result)), elem);
     }
 
     @Test
     void testMultiply() {
-        assertMultiplication("111", "101", "1011", "110");
+        testMultiplyCase(field1011, 0b111, 0b101, 0b110);
     }
 
-    private static void assertMultiplication(String lhs, String rhs, String mod, String expectedResult) {
-        FiniteFieldElement x = fromString(lhs);
-        FiniteFieldElement y = fromString(rhs);
-        x.multiply(y, fromString(mod));
-        assertEquals(fromString(expectedResult), x);
+    private void testMultiplyCase(GF2 field, int x, int y, int result) {
+        GF2Elem x_ = field.newElem(BigInteger.valueOf(x));
+        GF2Elem y_ = field.newElem(BigInteger.valueOf(y));
+        assertEquals(field.newElem(BigInteger.valueOf(result)), x_.multiply(y_));
     }
 
     @Test
     void testInverse() {
-        assertInversion("1", "1011");
-        assertInversion("10", "1011");
-        assertInversion("11", "1011");
-        assertInversion("100", "1011");
-        assertInversion("101", "1011");
-        assertInversion("110", "1011");
-        assertInversion("111", "1011");
-
-        assertInversion("1", "10011");
-        assertInversion("10", "10011");
-        assertInversion("11", "10011");
-        assertInversion("100", "10011");
-        assertInversion("101", "10011");
-        assertInversion("110", "10011");
-        assertInversion("111", "10011");
-        assertInversion("1000", "10011");
-        assertInversion("1001", "10011");
-        assertInversion("1010", "10011");
+        testInverseCase(field1011);
+        testInverseCase(field10011);
     }
 
-    private static void assertInversion(String num, String mod) {
-        FiniteFieldElement mod_ = fromString(mod);
-        FiniteFieldElement num_ = fromString(num);
-        FiniteFieldElement inverse = new FiniteFieldElement(num_);
-        inverse.multiplicativeInvert(mod_);
-        num_.multiply(inverse, mod_);
-        assertEquals(FiniteFieldElement.createOne(), num_);
-    }
+    private void testInverseCase(GF2 field) {
+        final int rpLen = field.getReducingPolynomial().getValue().bitLength();
+        final BigInteger upperBound = BigInteger.ONE.shiftRight(rpLen);
+        final GF2Elem one = field.newElem(BigInteger.ONE);
+        for (BigInteger x = BigInteger.ONE; x.compareTo(upperBound) < 0; x = x.add(BigInteger.ONE)) {
+            GF2Elem elem = field.newElem(x);
+            GF2Elem inverse = new GF2Elem(elem).mulInvert();
 
-    public static FiniteFieldElement fromString(String str) {
-        str = new StringBuilder(str).reverse().toString();
-
-        FiniteFieldElement element = new FiniteFieldElement(str.length());
-        for (int i = 0; i < str.length(); ++i) {
-            char ch = str.charAt(i);
-            element.set(i, ch == '1');
+            assertEquals(one, elem.multiply(inverse));
         }
-        return element;
     }
 
-    @Test
-    @EnabledOnJre({JRE.JAVA_8})
-    void test() {
-
-    }
 }

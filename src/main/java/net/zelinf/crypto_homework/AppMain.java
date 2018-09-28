@@ -2,6 +2,7 @@ package net.zelinf.crypto_homework;
 
 import net.zelinf.crypto_homework.classical.ex01.Virginia;
 import net.zelinf.crypto_homework.classical.ex02.AffineHill;
+import net.zelinf.crypto_homework.finitefield.FiniteFieldDemo;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.*;
@@ -75,5 +76,6 @@ public class AppMain {
     private static void addExercises() {
         registeredExercises.add(new Virginia());
         registeredExercises.add(new AffineHill());
+        registeredExercises.add(new FiniteFieldDemo());
     }
 }
