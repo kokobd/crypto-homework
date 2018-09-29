@@ -1,5 +1,8 @@
 image: Ubuntu
 
+cache:
+- $HOME/.gradle
+
 build: off
 
 test_script:
