@@ -1,5 +1,6 @@
 package net.zelinf.crypto_homework.classical.ex01;
 
+import com.google.auto.service.AutoService;
 import net.zelinf.crypto_homework.CmdUtils;
 import net.zelinf.crypto_homework.Exercise;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 /**
  * Crack Virginia password
  */
+@AutoService(Exercise.class)
 public class Virginia implements Exercise {
 
     @Override

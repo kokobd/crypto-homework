@@ -1,5 +1,6 @@
 package net.zelinf.crypto_homework.classical.ex02;
 
+import com.google.auto.service.AutoService;
 import net.zelinf.crypto_homework.CmdUtils;
 import net.zelinf.crypto_homework.Exercise;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -8,6 +9,7 @@ import org.apache.commons.math3.linear.RealVector;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+@AutoService(Exercise.class)
 public class AffineHill implements Exercise {
 
     @Override

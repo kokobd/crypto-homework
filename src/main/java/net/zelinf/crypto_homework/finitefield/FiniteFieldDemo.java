@@ -1,5 +1,6 @@
 package net.zelinf.crypto_homework.finitefield;
 
+import com.google.auto.service.AutoService;
 import net.zelinf.crypto_homework.CmdUtils;
 import net.zelinf.crypto_homework.Exercise;
 import net.zelinf.crypto_homework.finitefield.gf2.GF2;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.math.BigInteger;
 import java.util.Scanner;
 
+@AutoService(Exercise.class)
 public class FiniteFieldDemo implements Exercise {
 
     @Override

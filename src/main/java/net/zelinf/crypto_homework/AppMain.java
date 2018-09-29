@@ -74,8 +74,9 @@ public class AppMain {
     private static List<Exercise> registeredExercises = new ArrayList<>();
 
     private static void addExercises() {
-        registeredExercises.add(new Virginia());
-        registeredExercises.add(new AffineHill());
-        registeredExercises.add(new FiniteFieldDemo());
+        ServiceLoader<Exercise> serviceLoader = ServiceLoader.load(Exercise.class);
+        for (Exercise exercise : serviceLoader) {
+            registeredExercises.add(exercise);
+        }
     }
 }
