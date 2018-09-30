@@ -3,13 +3,16 @@ package net.zelinf.crypto_homework.finitefield;
 import net.zelinf.crypto_homework.finitefield.gf2.GF2;
 import net.zelinf.crypto_homework.finitefield.gf2.GF2Elem;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FiniteFieldElementTest {
+class GF2ElemTest {
 
     private static GF2 field1011;
 
@@ -21,48 +24,53 @@ class FiniteFieldElementTest {
         field10011 = new GF2(GF2.newBareElem(BigInteger.valueOf(0b10011)));
     }
 
-    @Test
-    void testAdd() {
-        testAddCase(field1011, 0b101, 0b110, 0b011);
-        testAddCase(field1011, 0b010, 0b011, 0b001);
-    }
-
-    private void testAddCase(GF2 field, int x, int y, int result) {
+    @ParameterizedTest
+    @MethodSource("testAddProvider")
+    void testAdd(GF2 field, int x, int y, int result) {
         GF2Elem lhs = field.newElem(BigInteger.valueOf(x));
         GF2Elem rhs = field.newElem(BigInteger.valueOf(y));
         lhs.add(rhs);
         assertEquals(field.newElem(BigInteger.valueOf(result)), lhs);
     }
 
-    @Test
-    void testModulo() {
-        testModuloCase(0b11011, 0b1011, 0b110);
+    static Stream<Arguments> testAddProvider() {
+        return Stream.of(
+                Arguments.of(field1011, 0b101, 0b110, 0b011),
+                Arguments.of(field1011, 0b010, 0b011, 0b001)
+        );
     }
 
-    private void testModuloCase(int num, int div, int result) {
+    @ParameterizedTest
+    @MethodSource("testModuloProvider")
+    void testModulo(int num, int div, int result) {
         GF2 gf2 = new GF2(GF2.newBareElem(BigInteger.valueOf(div)));
         GF2Elem elem = gf2.newElem(BigInteger.valueOf(num));
         assertEquals(gf2.newElem(BigInteger.valueOf(result)), elem);
     }
 
-    @Test
-    void testMultiply() {
-        testMultiplyCase(field1011, 0b111, 0b101, 0b110);
+    static Stream<Arguments> testModuloProvider() {
+        return Stream.of(
+                Arguments.of(0b11011, 0b1011, 0b110)
+        );
     }
 
-    private void testMultiplyCase(GF2 field, int x, int y, int result) {
+    @ParameterizedTest
+    @MethodSource("testMultiplyProvider")
+    void testMultiply(GF2 field, int x, int y, int result) {
         GF2Elem x_ = field.newElem(BigInteger.valueOf(x));
         GF2Elem y_ = field.newElem(BigInteger.valueOf(y));
         assertEquals(field.newElem(BigInteger.valueOf(result)), x_.multiply(y_));
     }
 
-    @Test
-    void testInverse() {
-        testInverseCase(field1011);
-        testInverseCase(field10011);
+    static Stream<Arguments> testMultiplyProvider() {
+        return Stream.of(
+                Arguments.of(field1011, 0b111, 0b101, 0b110)
+        );
     }
 
-    private void testInverseCase(GF2 field) {
+    @ParameterizedTest
+    @MethodSource("testInverseProvider")
+    void testInverse(GF2 field) {
         final int rpLen = field.getReducingPolynomial().getValue().bitLength();
         final BigInteger upperBound = BigInteger.ONE.shiftRight(rpLen);
         final GF2Elem one = field.newElem(BigInteger.ONE);
@@ -72,6 +80,13 @@ class FiniteFieldElementTest {
 
             assertEquals(one, elem.multiply(inverse));
         }
+    }
+
+    static Stream<Arguments> testInverseProvider() {
+        return Stream.of(
+                Arguments.of(field1011),
+                Arguments.of(field10011)
+        );
     }
 
 }
