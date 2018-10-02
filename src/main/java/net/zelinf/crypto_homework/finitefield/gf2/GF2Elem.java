@@ -55,7 +55,7 @@ public class GF2Elem implements CopyAssignable<GF2Elem> {
     }
 
     private int cardinality() {
-        return value.bitLength();
+        return value.bitLength() > 0 ? value.bitLength() - 1 : 0;
     }
 
     public void normalize() {
@@ -126,7 +126,7 @@ public class GF2Elem implements CopyAssignable<GF2Elem> {
             b.setField(null);
         }
 
-        setValue(c.getValue());
+        setValue(b.getValue());
         return this;
     }
 
