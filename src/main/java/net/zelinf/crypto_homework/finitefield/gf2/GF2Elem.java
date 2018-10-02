@@ -126,7 +126,7 @@ public class GF2Elem implements CopyAssignable<GF2Elem> {
             b.setField(null);
         }
 
-        copyAssign(c);
+        setValue(c.getValue());
         return this;
     }
 

@@ -72,13 +72,16 @@ class GF2ElemTest {
     @MethodSource("testInverseProvider")
     void testInverse(GF2 field) {
         final int rpLen = field.getReducingPolynomial().getValue().bitLength();
-        final BigInteger upperBound = BigInteger.ONE.shiftRight(rpLen);
+        final BigInteger upperBound = BigInteger.ONE.shiftLeft(rpLen - 1);
         final GF2Elem one = field.newElem(BigInteger.ONE);
+
         for (BigInteger x = BigInteger.ONE; x.compareTo(upperBound) < 0; x = x.add(BigInteger.ONE)) {
             GF2Elem elem = field.newElem(x);
             GF2Elem inverse = new GF2Elem(elem).mulInvert();
 
-            assertEquals(one, elem.multiply(inverse));
+            String msg = String.format("elem: %s, inverse: %s", elem.toString(), inverse.toString());
+
+            assertEquals(one, elem.multiply(inverse), msg);
         }
     }
 
